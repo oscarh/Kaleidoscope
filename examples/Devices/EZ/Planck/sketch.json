@@ -1,0 +1,6 @@
+{
+  "cpu": {
+    "fqbn": "STMicroelectronics:stm32:GenF3:pnum=GENERIC_F303CCTX,usb=HID",
+    "port": ""
+  }
+}
