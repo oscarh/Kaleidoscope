@@ -16,6 +16,9 @@
  */
 
 #pragma once
+
+#ifndef USBD_USE_HID_COMPOSITE
+
 #include <Arduino.h>
 #include <KeyboardioHID.h>
 #include "kaleidoscope/key_defs.h"
@@ -45,3 +48,5 @@ class Keyboardio: public Base<_Props> {};
 }
 }
 }
+
+#endif
