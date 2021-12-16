@@ -22,22 +22,20 @@
 #endif
 
 #include "Kaleidoscope.h"
-#include "Kaleidoscope-EEPROM-Settings.h"
-#include "Kaleidoscope-EEPROM-Keymap.h"
-#include "Kaleidoscope-FocusSerial.h"
+//#include "Kaleidoscope-EEPROM-Settings.h"
+//#include "Kaleidoscope-EEPROM-Keymap.h"
+//#include "Kaleidoscope-FocusSerial.h"
 #include "Kaleidoscope-Macros.h"
-#include "Kaleidoscope-MouseKeys.h"
-#include "Kaleidoscope-OneShot.h"
-#include "Kaleidoscope-Qukeys.h"
-#include "Kaleidoscope-SpaceCadet.h"
-
+//#include "Kaleidoscope-MouseKeys.h"
+//#include "Kaleidoscope-OneShot.h"
+//#include "Kaleidoscope-Qukeys.h"
+//#include "Kaleidoscope-SpaceCadet.h"
 
 
 #define MO(n) ShiftToLayer(n)
 #define TG(n) LockLayer(n)
 
 enum {
-  MACRO_QWERTY,
   MACRO_VERSION_INFO
 };
 
@@ -52,25 +50,31 @@ enum {
 #define Key_Plus LSHIFT(Key_Equals)
 
 enum {
-  QWERTY,
+  DVORAK,
   FUN,
   UPPER
 };
 
 /* *INDENT-OFF* */
 KEYMAPS(
-  [QWERTY] = KEYMAP_STACKED
+  [DVORAK] = KEYMAP_STACKED
   (
-       Key_Q   ,Key_W   ,Key_E       ,Key_R         ,Key_T
-      ,Key_A   ,Key_S   ,Key_D       ,Key_F         ,Key_G
-      ,Key_Z   ,Key_X   ,Key_C       ,Key_V         ,Key_B, Key_Backtick
+       ___   , Key_Comma   ,Key_Period       ,Key_P         ,Key_Y
+      ,Key_A   ,Key_O   ,Key_E       ,Key_U         ,Key_I
+      ,Key_Quote   ,Key_Q   ,Key_J       ,Key_K         ,Key_X, Key_Backtick
       ,Key_Esc ,Key_Tab ,Key_LeftGui ,Key_LeftShift ,Key_Backspace ,Key_LeftControl
 
-                     ,Key_Y     ,Key_U      ,Key_I     ,Key_O      ,Key_P
-                     ,Key_H     ,Key_J      ,Key_K     ,Key_L      ,Key_Semicolon
-       ,Key_Backslash,Key_N     ,Key_M      ,Key_Comma ,Key_Period ,Key_Slash
+                     ,Key_F     ,Key_G      ,Key_C     ,Key_R      ,Key_L
+                     ,Key_D     ,Key_H      ,Key_T     ,Key_N      ,Key_S
+       ,Key_Backslash,Key_B     ,Key_M      ,Key_W ,Key_V ,Key_Z
        ,Key_LeftAlt  ,Key_Space ,MO(FUN)    ,Key_Minus ,Key_Quote  ,Key_Enter
-  ),
+  )
+
+)
+
+/*
+,
+
 
   [FUN] = KEYMAP_STACKED
   (
@@ -98,31 +102,16 @@ KEYMAPS(
       ,___      ,___           ,MoveToLayer(QWERTY) ,Key_PrintScreen ,Key_ScrollLock ,Consumer_PlaySlashPause
    )
 )
+*/
 /* *INDENT-ON* */
 
 KALEIDOSCOPE_INIT_PLUGINS(
-  EEPROMSettings,
-  EEPROMKeymap,
-  Focus,
-  FocusEEPROMCommand,
-  FocusSettingsCommand,
-  Qukeys,
-  SpaceCadet,
-  OneShot,
-  Macros,
-  MouseKeys
+  Macros
 );
 
 const macro_t *macroAction(uint8_t macro_id, KeyEvent &event) {
   if (keyToggledOn(event.state)) {
     switch (macro_id) {
-    case MACRO_QWERTY:
-      // This macro is currently unused, but is kept around for compatibility
-      // reasons. We used to use it in place of `MoveToLayer(QWERTY)`, but no
-      // longer do. We keep it so that if someone still has the old layout with
-      // the macro in EEPROM, it will keep working after a firmware update.
-      Layer.move(QWERTY);
-      break;
     case MACRO_VERSION_INFO:
       Macros.type(PSTR("Keyboardio Atreus - Kaleidoscope "));
       Macros.type(PSTR(BUILD_INFORMATION));
@@ -136,8 +125,6 @@ const macro_t *macroAction(uint8_t macro_id, KeyEvent &event) {
 
 void setup() {
   Kaleidoscope.setup();
-  SpaceCadet.disable();
-  EEPROMKeymap.setup(10);
 }
 
 void loop() {
