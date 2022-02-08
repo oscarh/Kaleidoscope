@@ -22,14 +22,15 @@
 #endif
 
 #include "Kaleidoscope.h"
-//#include "Kaleidoscope-EEPROM-Settings.h"
-//#include "Kaleidoscope-EEPROM-Keymap.h"
-//#include "Kaleidoscope-FocusSerial.h"
 #include "Kaleidoscope-Macros.h"
-//#include "Kaleidoscope-MouseKeys.h"
-//#include "Kaleidoscope-OneShot.h"
-//#include "Kaleidoscope-Qukeys.h"
-//#include "Kaleidoscope-SpaceCadet.h"
+#include "Kaleidoscope-ShapeShifter.h"
+#include "./se-dvorak.h"
+
+
+static const kaleidoscope::plugin::ShapeShifter::dictionary_t shape_shift_dictionary[] PROGMEM = {
+ {Key_se_Quote, Key_2},
+ {Key_NoKey, Key_NoKey},
+};
 
 
 #define MO(n) ShiftToLayer(n)
@@ -39,56 +40,57 @@ enum {
   MACRO_VERSION_INFO
 };
 
-#define Key_Exclamation LSHIFT(Key_1)
-#define Key_At LSHIFT(Key_2)
-#define Key_Hash LSHIFT(Key_3)
-#define Key_Dollar LSHIFT(Key_4)
-#define Key_Percent LSHIFT(Key_5)
-#define Key_Caret LSHIFT(Key_6)
-#define Key_And LSHIFT(Key_7)
-#define Key_Star LSHIFT(Key_8)
-#define Key_Plus LSHIFT(Key_Equals)
-
 enum {
   DVORAK,
-  FUN,
-  UPPER
+  SYMBOLS,
+  NUMPAD_LANG
 };
 
 /* *INDENT-OFF* */
 KEYMAPS(
   [DVORAK] = KEYMAP_STACKED
   (
-       ___   , Key_Comma   ,Key_Period       ,Key_P         ,Key_Y
-      ,Key_A   ,Key_O   ,Key_E       ,Key_U         ,Key_I
-      ,Key_Quote   ,Key_Q   ,Key_J       ,Key_K         ,Key_X, Key_Backtick
-      ,Key_Esc ,Key_Tab ,Key_LeftGui ,Key_LeftShift ,Key_Backspace ,Key_LeftControl
+       Key_se_Tab    ,Key_Comma       ,Key_Period    ,Key_P                     ,Key_Y
+      ,Key_A         ,Key_O          ,Key_E         ,Key_U                     ,Key_I
+      ,Key_se_Quote  ,Key_Q          ,Key_J         ,Key_K                     ,Key_X         ,Key_se_UpArrow
+      ,Key_Esc       ,Key_se_LeftGui ,Key_LeftShift ,ShiftToLayer(NUMPAD_LANG) ,Key_Backspace ,Key_LeftAlt
 
-                     ,Key_F     ,Key_G      ,Key_C     ,Key_R      ,Key_L
-                     ,Key_D     ,Key_H      ,Key_T     ,Key_N      ,Key_S
-       ,Key_Backslash,Key_B     ,Key_M      ,Key_W ,Key_V ,Key_Z
-       ,Key_LeftAlt  ,Key_Space ,MO(FUN)    ,Key_Minus ,Key_Quote  ,Key_Enter
-  )
+                         ,Key_F     ,Key_G                 ,Key_C          ,Key_R        ,Key_L
+                         ,Key_D     ,Key_H                 ,Key_T          ,Key_N        ,Key_S
+       ,Key_se_DownArrow ,Key_B     ,Key_M                 ,Key_W          ,Key_V        ,Key_Z
+       ,Key_LeftControl  ,Key_Space ,ShiftToLayer(SYMBOLS) ,Key_RightShift ,Key_se_Minus ,Key_Enter
+  ),
+
+  [SYMBOLS] = KEYMAP_STACKED
+  (
+       Key_se_Caret            ,Key_se_Dollar            ,Key_se_LeftBracket ,Key_se_RightBracket ,Key_se_Pipe
+      ,Key_se_LeftCurlyBracket ,Key_se_RightCurlyBracket ,Key_se_LeftParen   ,Key_se_RightParen   ,Key_se_Slash
+      ,Key_se_Backtick         ,Key_se_Percent           ,Key_se_LessThan    ,Key_se_GreaterThan  ,Key_se_Star ,Key_se_LeftArrow
+      ,___                     ,___                      ,___                ,___                 ,___         ,___
+
+                          ,Key_se_Plus  ,Key_se_Exclamation ,Key_se_And ,Key_se_Equals ,Key_se_Question
+                          ,Key_se_Tilde ,Key_se_Hash        ,Key_se_At  ,___           ,___
+      ,Key_se_RightArrow  ,___          ,Key_se_Backslash   ,___ ,___ ,___
+      ,___                ,___          ,___                ,___ ,___ ,___
+  ),
+
+  [NUMPAD_LANG] = KEYMAP_STACKED
+  (
+       ___          ,___         ,___          ,___ ,___
+      ,Key_se_Aring ,Key_se_Auml ,Key_se_Ouml  ,___ ,___
+      ,___          ,___         ,___          ,___ ,___ , Key_se_PageUp
+      ,___          ,___         ,___          ,___ ,___ ,___
+
+                       ,___ ,Key_se_7      ,Key_se_8 ,Key_se_9 ,___
+                       ,___ ,Key_se_4      ,Key_se_5 ,Key_se_6 ,___
+      ,Key_se_PageDown ,___ ,Key_se_1      ,Key_se_2 ,Key_se_3 ,___
+      ,___             ,___ ,Key_LeftShift ,Key_se_0 ,___      ,___
+   )
 
 )
 
+
 /*
-,
-
-
-  [FUN] = KEYMAP_STACKED
-  (
-       Key_Exclamation ,Key_At           ,Key_UpArrow   ,Key_Dollar           ,Key_Percent
-      ,Key_LeftParen   ,Key_LeftArrow    ,Key_DownArrow ,Key_RightArrow       ,Key_RightParen
-      ,Key_LeftBracket ,Key_RightBracket ,Key_Hash      ,Key_LeftCurlyBracket ,Key_RightCurlyBracket ,Key_Caret
-      ,TG(UPPER)       ,Key_Insert       ,Key_LeftGui   ,Key_LeftShift        ,Key_Delete         ,Key_LeftControl
-
-                   ,Key_PageUp   ,Key_7 ,Key_8      ,Key_9 ,Key_Backspace
-                   ,Key_PageDown ,Key_4 ,Key_5      ,Key_6 ,___
-      ,Key_And     ,Key_Star     ,Key_1 ,Key_2      ,Key_3 ,Key_Plus
-      ,Key_LeftAlt ,Key_Space    ,___   ,Key_Period ,Key_0 ,Key_Equals
-   ),
-
   [UPPER] = KEYMAP_STACKED
   (
        Key_Insert            ,Key_Home                 ,Key_UpArrow   ,Key_End        ,Key_PageUp
@@ -103,10 +105,26 @@ KEYMAPS(
    )
 )
 */
+
+/*
+  [XYZ] = KEYMAP_STACKED
+  (
+       ___ ,___ ,___ ,___ ,___
+      ,___ ,___ ,___ ,___ ,___
+      ,___ ,___ ,___ ,___ ,___ ,___
+      ,___ ,___ ,___ ,___ ,___ ,___
+
+           ,___ ,___ ,___ ,___ ,___
+           ,___ ,___ ,___ ,___ ,___
+      ,___ ,___ ,___ ,___ ,___ ,___
+      ,___ ,___ ,___ ,___ ,___ ,___
+   )
+*/
 /* *INDENT-ON* */
 
 KALEIDOSCOPE_INIT_PLUGINS(
-  Macros
+  Macros,
+  ShapeShifter
 );
 
 const macro_t *macroAction(uint8_t macro_id, KeyEvent &event) {
@@ -125,6 +143,7 @@ const macro_t *macroAction(uint8_t macro_id, KeyEvent &event) {
 
 void setup() {
   Kaleidoscope.setup();
+  ShapeShifter.dictionary = shape_shift_dictionary;
 }
 
 void loop() {
